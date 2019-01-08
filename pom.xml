@@ -283,7 +283,7 @@
             <goals>
               <goal>build</goal>
               <goal>tag</goal>
-              <goal>push</goal>
+              <!--goal>push</goal-->
             </goals>
             <configuration>
               <tag>latest</tag>
@@ -295,7 +295,7 @@
             <goals>
               <goal>build</goal>
               <goal>tag</goal>
-              <goal>push</goal>
+              <!--goal>push</goal-->
             </goals>
             <configuration>
               <tag>${git.commit.id.abbrev}</tag>
