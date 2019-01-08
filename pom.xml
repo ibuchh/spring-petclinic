@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework.samples</groupId>
   <artifactId>spring-petclinic</artifactId>
@@ -30,6 +29,7 @@
     <jacoco.version>0.8.2</jacoco.version>
     <!-- Added by Irshad -->
     <imagetag>${git.commit.id.abbrev}</imagetag>
+    <maven.build.timestamp.format>yyyyMMdd-HHmmssSSS</maven.build.timestamp.format>
 
   </properties>
 
@@ -213,22 +213,22 @@
         </dependencies>
       </plugin>
       <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.21.0</version>
-				<configuration>
-					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!--plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.21.0</version>
+        <configuration>
+          <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
 				<version>0.9.7</version>
@@ -251,41 +251,62 @@
 				</configuration>
 			</plugin-->
       <!--plugin>
-            <groupId>com.google.cloud.tools</groupId>
-            <artifactId>jib-maven-plugin</artifactId>
-            <version>${jib.plugin.version}</version>
-            <configuration>
-					    <to>
-                  <image>${jib.image.repository}/${project.artifactId}</image>
-						      <tags>
-							        <tag>${project.version}</tag>
-							        <tag>${imagetag}</tag>
-							        <tag>latest</tag>
-						      </tags>
-              </to>
-                  <mainClass>${main.class}</mainClass>
-            </configuration>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>${jib.plugin.version}</version>
+        <configuration>
+          <to>
+            <image>${jib.image.repository}/${project.artifactId}-${maven.build.timestamp.format}</image>
+            <tags>
+              <tag>${project.version}</tag>
+              <tag>${imagetag}</tag>
+              <tag>latest</tag>
+            </tags>
+          </to>
+          <container>
+            <jvmFlags>
+              <jvmFlag>-Dcircle_build_num=${build.number}</jvmFlag>
+            </jvmFlags>
+            <useCurrentTimestamp>true</useCurrentTimestamp>
+          </container>
+          <mainClass>${main.class}</mainClass>
+        </configuration>
       </plugin-->
       <plugin>
         <groupId>com.spotify</groupId>
-             <artifactId>dockerfile-maven-plugin</artifactId>
-             <version>1.4.9</version>
-             <executions>
-                 <execution>
-                     <id>default</id>
-                     <goals>
-                         <goal>build</goal>
-                         <goal>push</goal>
-                     </goals>
-                 </execution>
-             </executions>
-             <configuration>
-             <repository>docker.io/ibuchh/spring-petclinic</repository>
-                 <tag>latest</tag>
-                 <tag>${git.commit.id.abbrev}</tag>
-             </configuration>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>1.4.9</version>
+        <executions>
+          <execution>
+            <id>tag-latest</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+              <goal>tag</goal>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <tag>latest</tag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>tag-version</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+              <goal>tag</goal>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <tag>${git.commit.id.abbrev}</tag>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <repository>ibuchh/spring-petclinic</repository>
+        </configuration>
       </plugin>
-      
+
     </plugins>
   </build>
 
